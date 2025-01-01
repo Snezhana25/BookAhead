@@ -1,0 +1,14 @@
+:root {
+    --litepicker-is-today-color: #2196f3;
+    --litepicker-is-locked-color: #d3d3d3;
+    --litepicker-header-color: #333;
+    --litepicker-button-disabled-color-bg: #9e9e9e;
+
+    --color_disabled: #9e9e9e;
+    --color_background: #7DB0C8;
+    --color_light_background: #f9f9f9;
+    --color_overflow: rgba(0, 0, 0, 0.5);
+    --color_elements: #0697BA;
+    --color_hover_elements: #699ED8;
+    --color_white: #fff;
+}
