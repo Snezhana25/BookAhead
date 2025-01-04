@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // calendar button
     const dateElement = document.getElementById("datepicker");
 
-
     const guestContainer = document.getElementById("guest-container");
     const adultField = document.getElementById("num-adults");
     const childrenField = document.getElementById("num-children");
@@ -25,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function closeModal(modalId, elementToShow = null, removeChildrenValue = null) {
+        const ageInput = childrenAgeContainer.querySelectorAll(".age-input");
+
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.style.display = "none";
@@ -36,6 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (removeChildrenValue) {
                 removeChildrenValue.value = 0;
                 childrenAgeContainer.style.display = "none";
+
+                if (ageInput) {
+                    ageInput.forEach(input => {
+                        input.value = '';
+                    });
+                    ageInput.length = 0;
+                }
             }
 
             if (modal && getComputedStyle(modal).display === 'none') {
@@ -322,9 +330,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const adults = parseInt(adultField.value, 10) || 0;
         const children = parseInt(childrenField.value, 10) || 0;
-        const childrenAges = Array.from(
-            childrenAgeContainer.querySelectorAll(".age-input")
-        ).map((input) => parseInt(input.value, 10) || 0);
+        const childrenAges = childrenField.value > 0
+            ? Array.from(childrenAgeContainer.querySelectorAll(".age-input"))
+                .map((input) => parseInt(input.value.trim(), 10))
+            : [];
 
         const party = {
             adults: adults,
@@ -450,9 +459,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function fetchRooms(checkin, checkout) {
         //The method executes a query to obtain available hotel rooms with the specified dates and number of people.
         const numAdults = parseInt(adultField.value, 10) || 0;
-        const childrenAges = Array.from(
-            childrenAgeContainer.querySelectorAll(".age-input")
-        ).map((input) => parseInt(input.value, 10) || 0);
+
+        const childrenAges = childrenField.value > 0
+            ? Array.from(childrenAgeContainer.querySelectorAll(".age-input")
+            ).map((input) => parseInt(input.value.trim(), 10)) : [];
 
         const url = `https://api.travelcircus.net/hotels/17080/quotes?locale=de_DE&checkin=${checkin}&checkout=${checkout}&party=${encodeURIComponent(
             JSON.stringify({ adults: numAdults, children: childrenAges })
