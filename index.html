@@ -4,39 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
-    <link rel="stylesheet" href="variables.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/calendar.css">
+    <link rel="stylesheet" href="styles/variables.css">
+    <link href="dist/output.css" rel="stylesheet">
 
     <title>Title</title>
 
 </head>
 <body>
-<div class="container">
-    <h1 class="text-container">Giving the best just for you</h1>
+<div class="container ">
+    <div class="guest-container" id="guest-container">
+        <div class="guests">
+            <label for="num-adults" class="label-adult">Adults:</label>
+            <input type="number" id="num-adults" class="num-adults" min="1" value="2" />
 
-    <div class="guest-container">
-        <div class="guests" id="guests">
-            <label for="num-adults">Adults:</label>
-            <input type="number" id="num-adults" min="1" value="2" />
-
-            <label for="num-children">Children:</label>
-            <input type="number" id="num-children" min="0" value="0" />
+            <label for="num-children" class="label-children">Children:</label>
+            <input type="number" id="num-children" class="num-children" min="0" value="0" />
             <button class="submit" id="datepicker">Search</button>
         </div>
         <div class="children-ages" id="children-ages" style="display: none;">
-            <h4>Extra bed:</h4>
-            <div id="extra-bed"></div>
+            <div id="extra-bed" class="flex flex-wrap gap-2"></div>
         </div>
-
     </div>
-    <div id="litepicker-container" class="litepicker-container"></div>
+    <div id="litepicker-container" class="litepicker-container mt-6"></div>
+
     <div id="rooms-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close-button" id="close-cards">&times;</span>
             </div>
 
-            <div id="room-container"></div>
+            <div id="room-container" class="p-4"></div>
         </div>
     </div>
 </div>

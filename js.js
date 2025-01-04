@@ -7,21 +7,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // calendar button
     const dateElement = document.getElementById("datepicker");
 
+
+    const guestContainer = document.getElementById("guest-container");
     const adultField = document.getElementById("num-adults");
     const childrenField = document.getElementById("num-children");
     const childrenAgeContainer = document.getElementById("children-ages");
 
-    function openModal(modalId) {
+    function openModal(modalId, elementToHide = null) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.style.display = "block";
         }
+
+        if (elementToHide) {
+            elementToHide.style.display = 'none';
+        }
     }
 
-    function closeModal(modalId) {
+    function closeModal(modalId, elementToShow = null, removeChildrenValue = null) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.style.display = "none";
+
+            if (elementToShow) {
+                elementToShow.style.display = "flex";
+            }
+
+            if (removeChildrenValue) {
+                removeChildrenValue.value = 0;
+                childrenAgeContainer.style.display = "none";
+            }
 
             if (modal && getComputedStyle(modal).display === 'none') {
                 const litepicker = document.querySelector('.litepicker');
@@ -34,8 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function toggleButton() {
         const ageInput = childrenAgeContainer.querySelectorAll(".age-input");
+
         const allFieldsFilled = Array.from(ageInput).every(age => {
-            const ageValue = parseInt(age.value.trim(), 10); // Convert to an integer
+            //Convert the age value to an integer and trim spaces
+            const ageValue = parseInt(age.value.trim(), 10);
+            // Return true if the age value is greater than or equal to 0, otherwise - false
             return ageValue >= 0;
         }) && childrenField.value >= 0;
 
@@ -55,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     roomsClose.addEventListener("click", () => {
-        closeModal(roomsModal);
+        closeModal(roomsModal, guestContainer, childrenField);
     });
 
-    function updateChildrenAgeFields(numChildren) {
+    function addChildrenAgeFields(numChildren) {
         childrenAgeContainer.innerHTML = "";
 
         if (numChildren > 0) {
@@ -67,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 0; i < numChildren; i++) {
                 const label = document.createElement("label");
                 label.textContent = `Child ${i + 1} Age:`;
+                label.className = "pr-4";
 
                 const input = document.createElement("input");
                 input.type = "number";
@@ -77,28 +96,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                checkbox.className = 'child-checkbox';
+                checkbox.className = "child-checkbox";
                 checkbox.dataset.childIndex = i;
 
                 const checkboxLabel = document.createElement("label");
+                checkboxLabel.className = "label-ExtraBed";
                 checkboxLabel.textContent = `Extra bed`;
 
-                childrenAgeContainer.appendChild(label);
-                childrenAgeContainer.appendChild(input);
+                const childContainer = document.createElement("div");
+                childContainer.className = "child-container";
 
-                childrenAgeContainer.appendChild(checkbox);
-                childrenAgeContainer.appendChild(checkboxLabel);
+                childContainer.appendChild(label);
+                childContainer.appendChild(input);
+                childContainer.appendChild(checkbox);
+                childContainer.appendChild(checkboxLabel);
+
+                childrenAgeContainer.appendChild(childContainer);
+
             }
         } else {
             childrenAgeContainer.style.display = "none";
         }
 
-        toggleButton()
+        toggleButton();
     }
 
     childrenField.addEventListener("input", () => {
         const numChildren = parseInt(childrenField.value, 10) || 0;
-        updateChildrenAgeFields(numChildren);
+        addChildrenAgeFields(numChildren);
         toggleButton();
     });
 
@@ -118,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function onInjectHeader(picker) {
+        //Add a calendar header with a close button
         const container = picker.ui;
         if (!container.querySelector('.litepicker-header')) {
             const header = document.createElement('div');
@@ -133,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function disableCalendarApplyBtn(picker, startDate, endDate) {
+        //Calendar button is blocked if no dates are selected
         const applyButton = picker.ui.querySelector('.button-apply');
 
         if (startDate && endDate) {
@@ -147,8 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
             element: data,
             singleMode: false,
             format: "YYYY-MM-DD",
-            numberOfMonths: 2,
-            numberOfColumns: 2,
+            numberOfMonths: window.innerWidth <= 768 ? 1 : 2,
+            numberOfColumns: window.innerWidth <= 768 ? 1 : 2,
             minDate: new Date(),
             minDays: 2,
             autoApply: false,
@@ -160,7 +187,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 picker.on('render', () => {
                     handlePriceTips(picker, availableDates);
                     onInjectHeader(picker);
-                    disableCalendarApplyBtn(picker);
+                });
+                picker.on('show', () => {
+                    if (window.innerWidth <= 768) {
+                        picker.setOptions({
+                            numberOfMonths: 1,
+                            numberOfColumns: 1
+                        });
+                    }
                 });
                 picker.on('button:apply', (start, end) => {
                     const checkin = start.format('YYYY-MM-DD');
@@ -169,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 picker.on('change:month', () => {
                     handlePriceTips(picker, availableDates);
+
                 });
                 picker.on('preselect', (startDate, endDate) => {
                     disableCalendarApplyBtn(picker, startDate, endDate);
@@ -186,8 +221,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             },
         });
+        window.addEventListener('resize', () => {
+            if (picker) {
+                if (window.innerWidth <= 768) {
+                    picker.setOptions({
+                        numberOfMonths: 1,
+                        numberOfColumns: 1,
+                    });
+                } else {
+                    picker.setOptions({
+                        numberOfMonths: 2,
+                        numberOfColumns: 2,
+                    });
+                }
+            }
+        });
 
         picker.show();
+        disableCalendarApplyBtn(picker);
 
         const litepicker = document.querySelector(".litepicker");
 
@@ -214,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const timestamp = parseInt(dateTimestamp, 10);
                 const date = new Date(timestamp);
 
-                //Format the current date in the format 'YYYY-MM-DD'
+                //Formatting the current date in the format "YYYY-MM-DD"
                 //This approach allows you to compare only days without time, which is necessary in this case for correct logic.
                 const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
                     .toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
@@ -234,6 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getMinMaxPrices(hotelQuotes) {
+        //Method for finding the minimum and maximum price among available hotel rooms for 1 night for adults
         let minPrice = Infinity;
         let maxPrice = -Infinity;
 
@@ -248,8 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return { minPrice, maxPrice };
     }
 
-    // Adding a price comparison indicator for 1 night for an adult
     function getPrice(roomPrice, minPrice, maxPrice) {
+        // Adding a price comparison indicator for 1 night for an adult
         const lowPrice = String.fromCodePoint(0x1F525);
         const highPrice = String.fromCodePoint(0x1F51D);
 
@@ -261,6 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchDates() {
+        //Method for getting available dates for hotel bookings
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -319,21 +372,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderCard(roomData, priceEmoji, hotelQuotes, numAdults, childrenAges) {
         const amenitiesList = roomData.amenities
             ? `<ul class="amenities-list">${roomData.amenities
-                .map(amenities => `<li class="amenity-item">${amenities.description}</li>`)
+                .map(amenities => `
+                <li class="amenity-item">${amenities.description}</li>`)
                 .join("")}</ul>`
             : "<p>No amenities available</p>";
 
         const roomCard = document.createElement("div");
-        roomCard.classList.add("card-room");
+        roomCard.className = "card-room";
         roomCard.innerHTML = `
             <div class="img-container">
                  <img src="${roomData.image}" alt="${roomData.alt_text}" class="room-image">
              </div>
-             <h3>${roomData.name}</h3>
-             <p>Price: ${roomData.price} <span>${hotelQuotes.length > 1 ? priceEmoji : ""}</span></p>
+             <h3 class="room-name">${roomData.name}</h3>
+             <p class="room-price">Price: ${roomData.price} <span>${hotelQuotes.length > 1 ? priceEmoji : ""}</span></p>
              <div class="amenities-container">${amenitiesList}</div>`;
 
-        return canAskExtraBed(roomData, numAdults, childrenAges)
+        return capacityOfTheRoom(roomData, numAdults, childrenAges)
             ? roomCard
             : messageElement(`We couldn't find a suitable room for you`);
     }
@@ -363,11 +417,22 @@ document.addEventListener("DOMContentLoaded", () => {
         roomContainer.insertAdjacentHTML("afterbegin", `<div>${title} <div class="selected-date">${selectedDate}</div></div>`);
     }
 
-    function canAskExtraBed(room, numAdults, childrenAges) {
+    function capacityOfTheRoom(room, numAdults, childrenAges) {
+        const childCheckbox = document.querySelectorAll('.child-checkbox');
         const maxCapacity = room.capacity.adults + room.capacity.children;
         const extraBedRanges = room.extra_bed_age_ranges || [];
+        const allCheckboxChecked = Array.from(childCheckbox).every(checkbox => checkbox.checked);
 
-        if (numAdults + childrenAges.length <= maxCapacity) {
+        if (childrenAges.length === 0) {
+            return numAdults <= maxCapacity;
+        }
+
+        if (numAdults > maxCapacity) {
+            return false;
+        }
+        
+        //Checked if the total number of adults and children does not exceed the capacity of the room
+        if (numAdults + childrenAges.length <= maxCapacity && allCheckboxChecked) {
             const isEligibleForExtraBed = childrenAges.some(childAge => {
                 return extraBedRanges.some(range => {
                     const minAge = range.min_age ?? 0;
@@ -383,8 +448,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function fetchRooms(checkin, checkout) {
+        //The method executes a query to obtain available hotel rooms with the specified dates and number of people.
         const numAdults = parseInt(adultField.value, 10) || 0;
-
         const childrenAges = Array.from(
             childrenAgeContainer.querySelectorAll(".age-input")
         ).map((input) => parseInt(input.value, 10) || 0);
@@ -403,17 +468,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     renderRoomContainer(hotelQuotes, checkin, checkout, numAdults, childrenAges);
                 } else {
                     const message = document.createElement("div");
-                    message.classList.add("message");
+                    message.className = "message";
 
                     const errorMessage = data.error?.message || "No available rooms for the selected dates.";
                     roomContainer.appendChild(messageElement(errorMessage));
                 }
 
-                openModal(roomsModal);
+                openModal(roomsModal, guestContainer);
             })
             .catch((error) => {
-                roomContainer.innerHTML = "<p>Something wrong. Please try again later.</p>";
-                openModal(roomsModal);
+                roomContainer.appendChild(messageElement('Something wrong. Please try again later'));
+                openModal(roomsModal, guestContainer);
             });
     }
 });

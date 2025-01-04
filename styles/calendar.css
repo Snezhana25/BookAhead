@@ -1,0 +1,119 @@
+.litepicker-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 20px 0;
+}
+
+.litepicker .container__months {
+    box-shadow: none;
+    background: var(--color_light_background);
+}
+
+.litepicker .container__months .month-item {
+    border-right: 1px solid var(--color_elements);
+    padding-right: 3px;
+}
+
+.litepicker .container__months .month-item:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.litepicker .day-item.is-today {
+    color: var(--litepicker-is-today-color) !important;
+    font-weight: bold;
+}
+
+.litepicker.update-styles .container__footer {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent;
+    padding: 0;
+    margin: 0 15px;
+}
+
+.litepicker.update-styles {
+    background: var(--color_light_background);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px 20px;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+}
+
+.litepicker.update-styles .container__footer .button-cancel,
+.litepicker.update-styles .container__footer .button-apply {
+    padding: 10px 20px;
+}
+
+.litepicker.update-styles .container__footer .button-apply {
+    margin-right: 0;
+    background: var(--color_elements);
+    transition: background 0.3s ease;
+}
+
+.litepicker.update-styles .container__footer .button-apply:hover {
+    background: var(--color_hover_elements);
+}
+
+.litepicker.update-styles .container__footer .button-apply:disabled {
+    background: var(--color_disabled);
+}
+
+.litepicker .container__days .day-item.is-start-date,
+.litepicker .container__days .day-item.is-end-date {
+    color: #fff !important;
+}
+
+.litepicker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.litepicker-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    color: var(--litepicker-header-color);
+}
+
+.litepicker-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--litepicker-header-color);
+}
+
+.litepicker-close:hover {
+    color: var(--litepicker-is-today-color);
+}
+
+.litepicker-container {
+    z-index: 9999;
+}
+
+.selected-date {
+    font-size: 11px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .litepicker.update-styles .container__footer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .litepicker.update-styles .container__footer .button-apply {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .litepicker .container__footer .preview-date-range {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: Arial, sans-serif;
+    @apply flex items-center justify-center h-screen bg-gray-100;
+}
+
+@layer base {
+    input:focus-visible {
+        @apply outline-none;
+    }
+    * {
+        box-sizing: border-box;
+    }
+}
+
+@layer components {
+    .child-checkbox {
+        @apply ml-4;
+    }
+
+    .label-ExtraBed {
+        @apply pl-4;
+    }
+
+    .img-container {
+        @apply flex justify-center;
+    }
+
+    .title {
+        @apply flex justify-center p-5 text-lg;
+    }
+
+    .message {
+        @apply p-4 mt-4 bg-background text-white rounded-md;
+    }
+
+    .amenities-list {
+        @apply list-none m-0 p-0 grid grid-cols-3 gap-2;
+    }
+
+    .amenity-item {
+        @apply border border-elements p-2 rounded text-center text-sm text-gray-800;
+    }
+
+    .age-input {
+        @apply border-b border-elements;
+    }
+
+    .child-container {
+        @apply border border-color-border p-4 mb-4;
+    }
+
+    .room-name {
+        @apply p-5 text-sm font-bold
+    }
+
+    .room-price {
+        @apply p-5 pt-0 text-lg font-bold
+    }
+}
+
+.container {
+    @apply flex flex-col items-center justify-center h-screen;
+}
+
+.submit {
+    @apply px-5 py-2 bg-elements text-white uppercase rounded-md cursor-pointer text-lg transition duration-300 ease-in-out;
+}
+
+.submit:hover {
+    @apply bg-hover-elements;
+}
+
+.submit:disabled {
+    @apply bg-disabled cursor-not-allowed;
+}
+
+.num-children, .num-adults {
+    @apply w-[200px] h-[30px] px-1.5 border-0 border-b border-elements focus:outline-none;
+}
+
+.guest-container {
+    @apply flex flex-col items-center justify-center text-center bg-white shadow-lg rounded-lg;
+}
+
+.guests {
+    @apply flex flex-nowrap items-center gap-2.5 p-5;
+}
+
+.children-ages {
+    @apply flex flex-row gap-1.5 mt-4 items-center hidden;
+}
+
+.label-adult, .label-children {
+    @apply text-gray-700 font-medium;
+}
+
+.modal {
+    @apply hidden fixed inset-0 w-full h-full overflow-auto bg-[var(--color_overflow)] z-[1000];
+}
+
+.modal-content {
+    @apply bg-white my-10 mx-auto p-5 border border-gray-300 w-4/5 max-w-[600px] rounded-lg relative;
+}
+
+.close-button {
+    @apply absolute top-2.5 right-5 text-2xl cursor-pointer;
+}
+
+@media (max-width: 768px) {
+    .amenities-list {
+        @apply grid-cols-1;
+    }
+
+    .children-ages, .guests {
+        @apply flex-col items-start;
+    }
+}
